@@ -16,13 +16,8 @@ class MessageController extends Controller
      */
     public function index(Request $request)
     {
-        //dd($request);
-        $message_group = $request->message_group;
-        if (isset($message_group)) {
-            $messages = Message::where("to", Auth::user()->id)->orWhere("from", Auth::user()->id)->get();
-            //логика по поиску 
-        }
-        return Message::where("to", Auth::user()->id)->orWhere("from", Auth::user()->id)->get();
+
+        return Message::where("from", Auth::user()->id)->orWhere("to", Auth::user()->id)->get();
     }
 
     /**
