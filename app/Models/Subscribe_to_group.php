@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class Subscribe_to_group extends Model
 {
     use HasFactory;
+    protected $guarded = false;
 }

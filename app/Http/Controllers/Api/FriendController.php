@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Friend;
 use Illuminate\Http\Request;
+use App\Http\Requests\Friend\StoreRequest;
 
 class FriendController extends Controller
 {
@@ -24,9 +25,10 @@ class FriendController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
-        //
+        $data = $request->validated();
+        return Friend::create($data);
     }
 
     /**
@@ -37,7 +39,7 @@ class FriendController extends Controller
      */
     public function show($id)
     {
-        //
+        return Friend::find($id);
     }
 
     /**

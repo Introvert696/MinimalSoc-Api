@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Document;
 use Illuminate\Http\Request;
+use App\Http\Requests\Document\StoreRequest;
+use Illuminate\Support\Facades\Auth;
+use Spatie\FlareClient\Http\Exceptions\NotFound;
 
 class DocumentController extends Controller
 {
@@ -15,6 +18,7 @@ class DocumentController extends Controller
      */
     public function index()
     {
+
         return Document::all();
     }
 
@@ -24,8 +28,12 @@ class DocumentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
+        $data = $request->validated();
+        $data['creater'] = Auth()->user()->id;
+        $document = Document::create($data);
+        return $document;
     }
 
     /**
@@ -36,6 +44,12 @@ class DocumentController extends Controller
      */
     public function show($id)
     {
+        $document = Document::find($id);
+        if ($document == null) {
+            $data['error']['message'] = 'Not found';
+            $data['error']['code'] = 404;
+            return $data;
+        }
         return Document::findOrFail($id);
     }
 
@@ -46,9 +60,26 @@ class DocumentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(StoreRequest $request, $id)
     {
-        //
+        $data = $request->validated();
+        $data['id'] = $id;
+        $data['creater'] = Auth()->user()->id;
+        $document = Document::find($id);
+        if ($document == null) {
+            $error['error']['message'] = 'Not found';
+            $error['error']['code'] = 404;
+            return $error;
+        } else {
+            if ($document['creater'] == Auth()->user()->id) {
+                $document->update($data);
+                return $document;
+            } else {
+                $error['error']['message'] = 'You are not creater';
+                $error['error']['code'] = 405;
+                return $error;
+            }
+        }
     }
 
     /**
@@ -59,6 +90,6 @@ class DocumentController extends Controller
      */
     public function destroy($id)
     {
-        //
+        return Document::destroy($id);
     }
 }

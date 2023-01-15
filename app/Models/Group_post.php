@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class Group_post extends Model
 {
     use HasFactory;
+    protected $guarded = false;
 }
