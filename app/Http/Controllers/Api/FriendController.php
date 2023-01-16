@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Friend;
 use Illuminate\Http\Request;
 use App\Http\Requests\Friend\StoreRequest;
+use App\Http\Requests\Friend\UpdateRequest;
+use League\CommonMark\Extension\SmartPunct\EllipsesParser;
 
 class FriendController extends Controller
 {
@@ -39,7 +41,14 @@ class FriendController extends Controller
      */
     public function show($id)
     {
-        return Friend::find($id);
+        $friend = Friend::find($id);
+        if ($friend == null) {
+            $error['error']['message'] = 'Not Found';
+            $error['error']['code'] = 404;
+            return $error;
+        } else {
+            return Friend::find($id);
+        }
     }
 
     /**
@@ -49,8 +58,18 @@ class FriendController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateRequest $request, $id)
     {
+        $friend = Friend::find($id);
+        if ($friend == null) {
+            $error['error']['message'] = 'Not Found';
+            $error['error']['code'] = 404;
+            return $error;
+        } else {
+            $data = $request->validated();
+            $friend->update($data);
+            return $friend;
+        }
     }
 
     /**
@@ -61,6 +80,16 @@ class FriendController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $friend = Friend::find($id);
+        if ($friend == null) {
+            $error['error']['message'] = 'Not Found';
+            $error['error']['code'] = 404;
+            return $error;
+        } else {
+            Friend::destroy($id);
+            $inf['data']['message'] = 'Delete';
+            $inf['data']['code'] = 202;
+            return $inf;
+        }
     }
 }
