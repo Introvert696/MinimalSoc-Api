@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Subscribe_to_group\StoreRequest;
 use App\Models\Subscribe_to_group;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class Subscribe_to_groupController extends Controller
 {
@@ -24,9 +26,11 @@ class Subscribe_to_groupController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
-        //
+        $data = $request->validated();
+        $data['user_id'] = Auth()->user()->id;
+        return Subscribe_to_group::create($data);
     }
 
     /**
@@ -37,7 +41,7 @@ class Subscribe_to_groupController extends Controller
      */
     public function show($id)
     {
-        //
+        return Subscribe_to_group::find($id);
     }
 
     /**
@@ -60,6 +64,22 @@ class Subscribe_to_groupController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $sbc = Subscribe_to_group::find($id);
+        if ($sbc != null) {
+            if ($sbc['user_id'] == Auth()->user()->id) {
+                Subscribe_to_group::destroy($id);
+                $inf['data']['message'] = 'Delete';
+                $inf['data']['code'] = 202;
+                return $inf;
+            } else {
+                $inf['error']['message'] = 'not creater';
+                $inf['error']['code'] = 403;
+                return $inf;
+            }
+        } else {
+            $inf['error']['message'] = 'not found';
+            $inf['error']['code'] = 404;
+            return $inf;
+        }
     }
 }

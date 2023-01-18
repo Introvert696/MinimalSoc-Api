@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Message\StoreRequest;
+use App\Http\Requests\Message\UpdateRequest;
 use App\Models\Message;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,9 +28,11 @@ class MessageController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
-        //
+        $data = $request->validated();
+        $data['from'] = Auth()->user()->id;
+        return Message::create($data);
     }
 
     /**
@@ -39,7 +43,21 @@ class MessageController extends Controller
      */
     public function show($id)
     {
-        //
+
+        $message = Message::find($id);
+        if ($message != null) {
+            if (($message['to'] == Auth()->user()->id) or ($message['from'] == Auth()->user()->id)) {
+                return $message;
+            } else {
+                $inf['error']['message'] = 'Dont have premission';
+                $inf['error']['code'] = 403;
+                return $inf;
+            }
+        } else {
+            $inf['error']['message'] = 'Message not found';
+            $inf['error']['code'] = 404;
+            return $inf;
+        }
     }
 
     /**
@@ -49,9 +67,23 @@ class MessageController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateRequest $request, $id)
     {
-        
+        $message = Message::find($id);
+        if ($message != null) {
+            if (($message['to'] == Auth()->user()->id) or ($message['from'] == Auth()->user()->id)) {
+                $message->update($request->validated());
+                return $message;
+            } else {
+                $inf['error']['message'] = 'Dont have premission';
+                $inf['error']['code'] = 403;
+                return $inf;
+            }
+        } else {
+            $inf['error']['message'] = 'Message not found';
+            $inf['error']['code'] = 404;
+            return $inf;
+        }
     }
 
     /**
@@ -62,6 +94,22 @@ class MessageController extends Controller
      */
     public function destroy($id)
     {
-
+        $message = Message::find($id);
+        if ($message != null) {
+            if (($message['to'] == Auth()->user()->id) or ($message['from'] == Auth()->user()->id)) {
+                Message::destroy($id);
+                $inf['data']['message'] = 'Message delete';
+                $inf['data']['code'] = 202;
+                return $inf;
+            } else {
+                $inf['error']['message'] = 'Dont have premission';
+                $inf['error']['code'] = 403;
+                return $inf;
+            }
+        } else {
+            $inf['error']['message'] = 'Message not found';
+            $inf['error']['code'] = 404;
+            return $inf;
+        }
     }
 }

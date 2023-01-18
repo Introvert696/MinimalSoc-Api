@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Post\StoreRequest;
+use App\Http\Requests\Post\UpdateRequest;
 use App\Models\Post;
 use Illuminate\Http\Request;
 
@@ -24,9 +26,11 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
-        //
+        $data = $request->validated();
+        $data['creater'] = Auth()->user()->id;
+        return Post::create($data);
     }
 
     /**
@@ -47,9 +51,24 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateRequest $request, $id)
     {
-        //
+        $data = $request->validated();
+        $post = Post::find($id);
+        if ($post != null) {
+            if ($post['creater'] == Auth()->user()->id) {
+                $post->update($data);
+                return $post;
+            } else {
+                $inf['error']['message'] = 'not creater';
+                $inf['error']['code'] = 403;
+                return $inf;
+            }
+        } else {
+            $inf['error']['message'] = 'not found';
+            $inf['error']['code'] = 404;
+            return $inf;
+        }
     }
 
     /**
@@ -60,6 +79,22 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $post = Post::find($id);
+        if ($post != null) {
+            if ($post['creater'] == Auth()->user()->id) {
+                Post::destroy($id);
+                $inf['data']['message'] = 'delete';
+                $inf['data']['code'] = 202;
+                return $inf;
+            } else {
+                $inf['error']['message'] = 'not creater';
+                $inf['error']['code'] = 403;
+                return $inf;
+            }
+        } else {
+            $inf['error']['message'] = 'not found';
+            $inf['error']['code'] = 404;
+            return $inf;
+        }
     }
 }

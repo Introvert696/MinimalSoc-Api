@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Messages_group\StoreRequest;
+use App\Http\Requests\Messages_group\UpdateRequest;
 use App\Models\Messages_group;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class Messages_groupController extends Controller
 {
@@ -15,7 +18,7 @@ class Messages_groupController extends Controller
      */
     public function index()
     {
-        return Messages_group::all();
+        return Messages_group::where("first_user", Auth()->user()->id)->orWhere("second_user", Auth()->user()->id)->get();
     }
 
     /**
@@ -24,9 +27,11 @@ class Messages_groupController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
-        //
+        $data = $request->validated();
+        $data['first_user'] = Auth()->user()->id;
+        return Messages_group::create($data);
     }
 
     /**
@@ -37,7 +42,17 @@ class Messages_groupController extends Controller
      */
     public function show($id)
     {
-        //
+        $message_group = Messages_group::find($id);
+        $current_mess['group'] = $message_group;
+        if (($message_group['first_user'] == Auth()->user()->id) or ($message_group['second_user'] == Auth()->user()->id)) {
+            $messages_group_message = Messages_group::find($id)->messages()->get();
+            $current_mess['message'] = $messages_group_message;
+            return $current_mess;
+        } else {
+            $inf['error']['message'] = 'not found';
+            $inf['error']['code'] = 404;
+            return $inf;
+        }
     }
 
     /**
@@ -47,9 +62,24 @@ class Messages_groupController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateRequest $request, $id)
     {
-        //
+        $data = $request->validated();
+        $message_group = Messages_group::find($id);
+        if ($message_group != null) {
+            if (($message_group['first_user'] == Auth()->user()->id) or ($message_group['second_user'] == Auth()->user()->id)) {
+                $message_group->update($data);
+                return $message_group;
+            } else {
+                $inf['error']['message'] = 'not found';
+                $inf['error']['code'] = 404;
+                return $inf;
+            }
+        } else {
+            $inf['error']['message'] = 'not found';
+            $inf['error']['code'] = 404;
+            return $inf;
+        }
     }
 
     /**
@@ -60,6 +90,23 @@ class Messages_groupController extends Controller
      */
     public function destroy($id)
     {
-        //
+
+        $message_group = Messages_group::find($id);
+        if ($message_group != null) {
+            if (($message_group['first_user'] == Auth()->user()->id) or ($message_group['second_user'] == Auth()->user()->id)) {
+                Messages_group::destroy($id);
+                $inf['data']['message'] = 'delete';
+                $inf['data']['code'] = 202;
+                return $inf;
+            } else {
+                $inf['error']['message'] = 'not found';
+                $inf['error']['code'] = 404;
+                return $inf;
+            }
+        } else {
+            $inf['error']['message'] = 'not found';
+            $inf['error']['code'] = 404;
+            return $inf;
+        }
     }
 }

@@ -9,4 +9,9 @@ class Messages_group extends Model
 {
     use HasFactory;
     protected $guarded = false;
+
+    public function messages()
+    {
+        return $this->hasMany(Message::class, 'message_group', 'id');
+    }
 }
