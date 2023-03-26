@@ -24,10 +24,7 @@ class StoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'title' => 'string',
-            'path' => 'string',
-            'creater' => '',
-            'created_at' => '',
+            'file' => '',
         ];
     }
 }
