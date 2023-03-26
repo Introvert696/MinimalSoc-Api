@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\Messages_groupController;
 use App\Http\Controllers\Api\Subscribe_to_groupController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ImageController;
 use App\Models\Group;
 use App\Models\Group_post;
 use App\Models\Message;
@@ -33,6 +34,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
 Route::group([
     'middleware' => 'api',
 ], function ($router) {
@@ -41,6 +43,7 @@ Route::group([
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/refresh', [AuthController::class, 'refresh']);
     Route::get('/user-profile', [AuthController::class, 'userProfile']);
+    Route::get('/image/{image}', [ImageController::class, 'show']);
 });
 Route::group([
     'middleware' => 'auth:api'

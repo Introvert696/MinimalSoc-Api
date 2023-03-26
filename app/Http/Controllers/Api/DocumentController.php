@@ -30,7 +30,12 @@ class DocumentController extends Controller
      */
     public function store(StoreRequest $request)
     {
-        $data = $request->validated();
+        $file = $request->file('file');
+        $fileName = $file->getClientOriginalName();
+        //$file->storeAs('/uploads', $fileName);
+
+        $data['title']  = $file->getClientOriginalName();
+        $data['path'] = "/image/" . $file->getClientOriginalName();
         $data['creater'] = Auth()->user()->id;
         $document = Document::create($data);
         return $document;
@@ -44,6 +49,7 @@ class DocumentController extends Controller
      */
     public function show($id)
     {
+
         $document = Document::find($id);
         if ($document == null) {
             $data['error']['message'] = 'Not found';
