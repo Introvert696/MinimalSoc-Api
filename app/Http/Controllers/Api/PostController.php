@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Post\StoreRequest;
 use App\Http\Requests\Post\UpdateRequest;
+use App\Models\Friend;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
@@ -17,14 +19,39 @@ class PostController extends Controller
      */
     public function index()
     {
-        $raw_posts = Post::all();
+        $friend_list = [];
+        $raw_posts = [];
         $posts = [];
+        //получение друзей пользователя
+        $friends = Friend::where("first_user", Auth()->user()->id)->orWhere("second_user", Auth()->user()->id)->get();
+        foreach ($friends as $f) {
+            if ($f['first_user'] == Auth()->user()->id) {
+                array_push($friend_list, $f['second_user']);
+            } else {
+                array_push($friend_list, $f['first_user']);
+            }
+        }
+        //получение постов самого пользователя
+        $user_post = Post::where("creater", Auth()->user()->id)->get();
+
+        foreach ($user_post as $up) {
+            array_push($raw_posts, $up);
+        }
+
+        //получение постов друзей пользователя
+        foreach ($friend_list as $fl) {
+            $fr_posts = Post::where("creater", $fl)->get();
+            foreach ($fr_posts as $fp) {
+                array_push($raw_posts, $fp);
+            }
+        }
+        //Добавление постам, строк о создателях
         foreach ($raw_posts as $post) {
             $current_post["post"] = $post;
             $post->creator;
             array_push($posts, $current_post);
         }
-        array_reverse($posts);
+        //array_reverse($posts);
         return $posts;
     }
 
