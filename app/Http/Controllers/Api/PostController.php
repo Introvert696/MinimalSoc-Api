@@ -17,7 +17,15 @@ class PostController extends Controller
      */
     public function index()
     {
-        return Post::all();
+        $raw_posts = Post::all();
+        $posts = [];
+        foreach ($raw_posts as $post) {
+            $current_post["post"] = $post;
+            $post->creator;
+            array_push($posts, $current_post);
+        }
+        array_reverse($posts);
+        return $posts;
     }
 
     /**
