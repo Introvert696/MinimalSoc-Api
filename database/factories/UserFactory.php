@@ -18,8 +18,8 @@ class UserFactory extends Factory
     public function definition()
     {
         return [
-            'name' => fake()->name(),
-            'lastname' => fake()->name(),
+            'name' => fake()->word(1),
+            'lastname' => fake()->word(1),
             'birthday' => fake()->date(),
             'login' => fake()->word(),
             'status' => 'fff',
