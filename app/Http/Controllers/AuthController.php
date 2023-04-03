@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Document;
 use App\Models\User;
 use Validator;
 use Illuminate\Http\Request;
@@ -45,16 +46,49 @@ class AuthController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|between:2,100',
+            'lastname' => 'required',
+            'birthday' => 'required',
+            'user_photo' => '',
+            'bg_image' => '',
+            'login' => 'required',
             'email' => 'required|string|email|max:100|unique:users',
             'password' => 'required|string|confirmed|min:6',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors()->toJson(), 400);
         }
+        //Загрузка аватарки
+        $user_photo = $request->file('photo_user');
+        $user_photoName = $user_photo->getClientOriginalName();
+        //Загрузка беэшки
+        $bg = $request->file('bg_image');
+        $bgName = $bg->getClientOriginalName();
+
         $user = User::create(array_merge(
             $validator->validated(),
-            ['password' => bcrypt($request->password)]
+            [
+                'password' => bcrypt($request->password),
+                'user_photo' => $user_photoName,
+                'bg_image' => $bgName
+            ]
         ));
+
+
+        //dd($user_photoName);
+        $user_photo->storeAs('/uploads', $user_photoName);
+        $data['title']  = $user_photo->getClientOriginalName();
+        $data['path'] = "/image/" . $user_photo->getClientOriginalName();
+        $data['creater'] = $user->id;
+        $document = Document::create($data);
+
+
+        //dd($bgName);
+        $bg->storeAs('/uploads', $bgName);
+        $data['title']  = $bg->getClientOriginalName();
+        $data['path'] = "/image/" . $bg->getClientOriginalName();
+        $data['creater'] = $user->id;
+        $document = Document::create($data);
+
         return response()->json([
             'message' => 'User successfully registered',
             'user' => $user

@@ -18,8 +18,8 @@ class DocumentFactory extends Factory
     public function definition()
     {
         return [
-            "title" => fake()->word(),
-            'path' => fake()->imageUrl(),
+            "title" => "not_found.png",
+            'path' => "not_found.png",
             'creater' => User::get()->random()->id,
 
         ];

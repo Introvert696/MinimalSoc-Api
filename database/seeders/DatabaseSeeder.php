@@ -27,7 +27,7 @@ class DatabaseSeeder extends Seeder
 
         $users = User::factory(10)->create();
         $posts = Post::factory(50)->create();
-        $documents = Document::factory(20)->create();
+        $documents = Document::factory(1)->create();
         $friends = Friend::factory(10)->create();
         $groups = Group::factory(10)->create();
         $group_posts = Group_post::factory(30)->create();
