@@ -18,7 +18,13 @@ class Messages_groupController extends Controller
      */
     public function index()
     {
-        return Messages_group::where("first_user", Auth()->user()->id)->orWhere("second_user", Auth()->user()->id)->get();
+        $messages_group = Messages_group::where("first_user", Auth()->user()->id)->orWhere("second_user", Auth()->user()->id)->get();
+        foreach ($messages_group as $m) {
+            $m->messages;
+            $m->firstuser;
+            $m->seconduser;
+        };
+        return $messages_group;
     }
 
     /**
