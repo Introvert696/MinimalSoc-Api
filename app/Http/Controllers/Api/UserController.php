@@ -39,11 +39,17 @@ class UserController extends Controller
     public function show($id)
     {
         $data = [];
-        $user = new UserResource(User::findOrFail($id));
-        $posts = $user->posts;
-        $data['user'] = $user;
-        $data['posts'] = $posts;
-        return $data;
+        $user = new UserResource(User::find($id));
+        if ($user->resource == null) {
+            $errorresp['code'] = 404;
+            $errorresp['message'] = "User not found";
+            return response($errorresp, 404);
+        } else {
+            $posts = $user->posts;
+            $data['user'] = $user;
+            $data['posts'] = $posts;
+            return $data;
+        }
     }
 
     /**

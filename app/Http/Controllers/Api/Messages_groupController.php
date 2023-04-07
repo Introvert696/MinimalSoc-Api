@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Messages_group\StoreRequest;
 use App\Http\Requests\Messages_group\UpdateRequest;
+use App\Models\Message;
 use App\Models\Messages_group;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -48,17 +49,24 @@ class Messages_groupController extends Controller
      */
     public function show($id)
     {
+        // $message_group = Messages_group::find($id);
+        // $current_mess['group'] = $message_group;
+        // if (($message_group['first_user'] == Auth()->user()->id) or ($message_group['second_user'] == Auth()->user()->id)) {
+        //     $messages_group_message = Messages_group::find($id)->messages()->get();
+        //     $current_mess['message'] = $messages_group_message;
+
+        //     return $current_mess;
+        // } else {
+        //     $inf['error']['message'] = 'not found';
+        //     $inf['error']['code'] = 404;
+        //     return $inf;
+        // }
         $message_group = Messages_group::find($id);
-        $current_mess['group'] = $message_group;
-        if (($message_group['first_user'] == Auth()->user()->id) or ($message_group['second_user'] == Auth()->user()->id)) {
-            $messages_group_message = Messages_group::find($id)->messages()->get();
-            $current_mess['message'] = $messages_group_message;
-            return $current_mess;
-        } else {
-            $inf['error']['message'] = 'not found';
-            $inf['error']['code'] = 404;
-            return $inf;
-        }
+        $message_group->firstuser;
+        $message_group->seconduser;
+        $message_group->messages;
+
+        return ($message_group);
     }
 
     /**
