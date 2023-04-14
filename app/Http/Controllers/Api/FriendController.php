@@ -7,6 +7,7 @@ use App\Models\Friend;
 use Illuminate\Http\Request;
 use App\Http\Requests\Friend\StoreRequest;
 use App\Http\Requests\Friend\UpdateRequest;
+use Illuminate\Support\Facades\Auth;
 use League\CommonMark\Extension\SmartPunct\EllipsesParser;
 
 class FriendController extends Controller
@@ -18,7 +19,14 @@ class FriendController extends Controller
      */
     public function index()
     {
-        return Friend::all();
+        $id = Auth()->user()->id;
+        $friends = Friend::where("first_user", $id)->orWhere("second_user", $id)->get();
+
+        foreach ($friends as $f) {
+            $f->firstuser;
+            $f->seconduser;
+        }
+        return $friends;
     }
 
     /**

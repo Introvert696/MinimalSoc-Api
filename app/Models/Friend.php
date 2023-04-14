@@ -9,4 +9,12 @@ class Friend extends Model
 {
     use HasFactory;
     protected $guarded = false;
+    public function firstuser()
+    {
+        return $this->belongsTo(User::class, "first_user", "id");
+    }
+    public function seconduser()
+    {
+        return $this->belongsTo(User::class, "second_user", 'id');
+    }
 }
