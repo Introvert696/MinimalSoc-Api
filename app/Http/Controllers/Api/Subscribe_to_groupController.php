@@ -17,7 +17,11 @@ class Subscribe_to_groupController extends Controller
      */
     public function index()
     {
-        return Subscribe_to_group::all();
+        $subsc = Subscribe_to_group::where("user_id", Auth()->user()->id)->get();
+        foreach ($subsc as $s) {
+            $s->group;
+        }
+        return $subsc;
     }
 
     /**
@@ -70,16 +74,16 @@ class Subscribe_to_groupController extends Controller
                 Subscribe_to_group::destroy($id);
                 $inf['data']['message'] = 'Delete';
                 $inf['data']['code'] = 202;
-                return $inf;
+                return response($inf, 202);
             } else {
                 $inf['error']['message'] = 'not creater';
                 $inf['error']['code'] = 403;
-                return $inf;
+                return response($inf, 403);
             }
         } else {
             $inf['error']['message'] = 'not found';
             $inf['error']['code'] = 404;
-            return $inf;
+            return response($inf, 404);
         }
     }
 }

@@ -9,4 +9,9 @@ class Subscribe_to_group extends Model
 {
     use HasFactory;
     protected $guarded = false;
+
+    public function group()
+    {
+        return $this->belongsTo(Group::class, "group_id");
+    }
 }
