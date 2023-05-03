@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Group\StoreRequest;
 use App\Http\Requests\Group\UpdateRequest;
 use App\Models\Group;
+use App\Models\Subscribe_to_group;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 use function GuzzleHttp\Promise\exception_for;
 
@@ -33,6 +35,7 @@ class GroupController extends Controller
     {
         $date = $request->validated();
         $date['creater'] = Auth()->user()->id;
+        //создаем запись в таблице подписок
         return Group::create($date);
     }
 
@@ -46,6 +49,14 @@ class GroupController extends Controller
     {
         $group = Group::find($id);
         if ($group != null) {
+            $group->posts;
+            $subsribed = Subscribe_to_group::where("user_id", Auth()->user()->id)->where("group_id", $group->id)->get();
+            if (isset($subsribed[0]->user_id)) {
+                $group["is_sub"] = True;
+            } else {
+                $group["is_sub"] = False;
+            }
+
             return $group;
         } else {
             $inf['error']['message'] = 'Group not found';

@@ -9,4 +9,8 @@ class Group extends Model
 {
     use HasFactory;
     protected $guarded = false;
+    public function posts()
+    {
+        return $this->hasMany(Group_post::class, "creater", "id");
+    }
 }
