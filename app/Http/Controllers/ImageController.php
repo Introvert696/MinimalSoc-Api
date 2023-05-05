@@ -13,9 +13,12 @@ class ImageController extends Controller
         $document = Document::where('title', $image)->first();
 
         if ($document != null) {
+
             $imagetitle = $document->title;
             $pathToFile = storage_path("app\uploads\\" . $imagetitle);
-
+            //$pathToFile = storage_path("app\uploads\\" . $imagetitle); - это строчка для формирования пути под виндовс
+            // $pathToFile = storage_path("app/uploads/" . $imagetitle); // это строчка для формирования пути под линукс
+            //dd($pathToFile);
             if (file_exists($pathToFile)) {
                 return response()->file($pathToFile);
             } else {
