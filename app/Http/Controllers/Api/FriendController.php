@@ -20,13 +20,21 @@ class FriendController extends Controller
     public function index()
     {
         $id = Auth()->user()->id;
-        $friends = Friend::where("first_user", $id)->orWhere("second_user", $id)->get();
+        $friends = Friend::where([["friend_status", '=', '1'], ['first_user', '=', $id]])->orWhere([["friend_status", '=', '1'], ['second_user', '=', $id]])->get();
+
+        $frend_request = Friend::where("friend_status", 0)->where("second_user", $id)->get();
 
         foreach ($friends as $f) {
             $f->firstuser;
             $f->seconduser;
         }
-        return $friends;
+        foreach ($frend_request as $r) {
+            $r->firstuser;
+            $r->seconduser;
+        }
+        $response['friend'] = $friends;
+        $response['requests'] = $frend_request;
+        return $response;
     }
 
     /**
@@ -74,7 +82,9 @@ class FriendController extends Controller
             $error['error']['code'] = 404;
             return $error;
         } else {
+
             $data = $request->validated();
+
             $friend->update($data);
             return $friend;
         }
