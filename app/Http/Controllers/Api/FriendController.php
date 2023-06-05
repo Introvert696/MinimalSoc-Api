@@ -45,8 +45,13 @@ class FriendController extends Controller
      */
     public function store(StoreRequest $request)
     {
+
         $data = $request->validated();
-        return Friend::create($data);
+        $data['first_user'] = Auth()->user()->id;
+
+        $data['friend_status'] = 0;
+
+        return Friend::firstOrCreate($data);
     }
 
     /**

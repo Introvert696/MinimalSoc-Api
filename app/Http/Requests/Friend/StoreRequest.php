@@ -24,7 +24,7 @@ class StoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'first_user' => '',
+
             'second_user' => '',
             'friend_status' => '',
         ];

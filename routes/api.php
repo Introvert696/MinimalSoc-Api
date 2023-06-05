@@ -45,6 +45,7 @@ Route::group([
     Route::get('/userprofile', [AuthController::class, 'userProfile']);
     Route::get('/image/{image}', [ImageController::class, 'show']);
     Route::get('/getuser/{prompt}', [UserController::class, 'getByNameLastname']);
+    Route::get('/getgroup/{prompt}', [GroupController::class, 'search']);
 });
 Route::group([
     'middleware' => 'auth:api'

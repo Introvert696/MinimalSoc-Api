@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Group\StoreRequest;
 use App\Http\Requests\Group\UpdateRequest;
+use App\Models\Document;
 use App\Models\Group;
 use App\Models\Subscribe_to_group;
 use Exception;
@@ -35,7 +36,19 @@ class GroupController extends Controller
     {
         $date = $request->validated();
         $date['creater'] = Auth()->user()->id;
-        //создаем запись в таблице подписок
+
+        $user_photo = $request->file('photo');
+        $user_photoName = $user_photo->getClientOriginalName();
+        //Загружаем аватар на сервер и добавляем в таблицу документов
+        $user_photo->storeAs('/uploads', $user_photoName);
+        $photoData['title']  = $user_photo->getClientOriginalName();
+        $photoData['path'] = "/image/" . $user_photo->getClientOriginalName();
+        $photoData['creater'] = Auth()->user()->id;
+        $document = Document::create($photoData);
+
+
+        $date['photo'] =  $user_photoName;
+        //создаем запись в таблице групп
         return Group::create($date);
     }
 
@@ -119,5 +132,10 @@ class GroupController extends Controller
             $inf['error']['code'] = 404;
             return $inf;
         }
+    }
+    public function search($prompt)
+    {
+        $groups = Group::where('title', 'LIKE', "%{$prompt}%")->get();
+        return $groups;
     }
 }

@@ -34,7 +34,7 @@ class Subscribe_to_groupController extends Controller
     {
         $data = $request->validated();
         $data['user_id'] = Auth()->user()->id;
-        return Subscribe_to_group::create($data);
+        return Subscribe_to_group::firstOrCreate($data);
     }
 
     /**
