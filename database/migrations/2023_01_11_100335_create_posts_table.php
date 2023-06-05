@@ -20,6 +20,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('creater', 'posts_creater_id_fk')->references('id')->on('users');
+            $table->softDeletes();
         });
     }
 

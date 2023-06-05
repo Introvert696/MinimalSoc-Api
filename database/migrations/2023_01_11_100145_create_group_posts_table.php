@@ -21,6 +21,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('creater', 'group_posts_creater_id_fk')->references('id')->on('groups');
+            $table->softDeletes();
         });
     }
 

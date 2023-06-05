@@ -23,6 +23,8 @@ return new class extends Migration
 
             $table->foreign('first_user', 'friends_first_user_id_fk')->references('id')->on('users');
             $table->foreign('second_user', 'friends_second_user_id_fk')->references('id')->on('users');
+
+            $table->softDeletes();
         });
     }
 

@@ -22,6 +22,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('creater', 'groups_creater_id_fk')->references('id')->on('users');
+            $table->softDeletes();
         });
     }
 

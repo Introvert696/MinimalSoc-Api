@@ -24,6 +24,7 @@ return new class extends Migration
             $table->foreign('from', 'messages_from_id_fk')->references('id')->on('users');
             $table->foreign('to', 'messages_to_id_fk')->references('id')->on('users');
             $table->foreign('message_group', 'messages_message_group_id_fk')->references('id')->on('messages_groups');
+            $table->softDeletes();
         });
     }
 

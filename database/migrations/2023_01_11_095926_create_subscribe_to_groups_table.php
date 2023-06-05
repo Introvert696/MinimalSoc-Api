@@ -21,6 +21,7 @@ return new class extends Migration
 
             $table->foreign('group_id', 'subscribe_to_groups_group_id_id_fk')->references('id')->on('groups');
             $table->foreign('user_id', 'subscribe_to_groups_user_id_id_fk')->references('id')->on('users');
+            $table->softDeletes();
         });
     }
 

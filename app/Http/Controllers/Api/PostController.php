@@ -45,12 +45,14 @@ class PostController extends Controller
                 array_push($raw_posts, $fp);
             }
         }
+
         //Добавление постам, строк о создателях
         foreach ($raw_posts as $post) {
             $current_post["post"] = $post;
             $post->creator;
             array_push($posts, $current_post);
         }
+
         //array_reverse($posts);
         return $posts;
     }

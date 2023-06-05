@@ -14,6 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('users', function (Blueprint $table) {
+
             $table->id();
             $table->string('name');
             $table->string('lastname');
@@ -27,6 +28,8 @@ return new class extends Migration
             $table->string('status')->default('none');
             $table->rememberToken();
             $table->timestamps();
+
+            $table->softDeletes();
         });
     }
 
