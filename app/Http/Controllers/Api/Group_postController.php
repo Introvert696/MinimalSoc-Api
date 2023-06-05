@@ -32,6 +32,7 @@ class Group_postController extends Controller
         $data = $request->validated();
         $group = Group::find($data['creater']);
         if ($group != null) {
+
             if ($group->creater == Auth()->user()->id) {
                 $group_post = Group_post::create($data);
                 return $group_post;
