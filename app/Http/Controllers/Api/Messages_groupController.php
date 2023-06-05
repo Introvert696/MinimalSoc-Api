@@ -38,7 +38,7 @@ class Messages_groupController extends Controller
     {
         $data = $request->validated();
         $data['first_user'] = Auth()->user()->id;
-        return Messages_group::create($data);
+        return Messages_group::firstOrCreate($data);
     }
 
     /**

@@ -122,4 +122,10 @@ class UserController extends Controller
     {
         //
     }
+    public function getByNameLastname($prompt)
+    {
+
+        $users = User::where('name', 'LIKE', "%{$prompt}%")->orWhere('lastname', 'LIKE', "%{$prompt}%")->get();
+        return $users;
+    }
 }

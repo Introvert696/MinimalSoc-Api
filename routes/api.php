@@ -44,6 +44,7 @@ Route::group([
     Route::post('/refresh', [AuthController::class, 'refresh']);
     Route::get('/userprofile', [AuthController::class, 'userProfile']);
     Route::get('/image/{image}', [ImageController::class, 'show']);
+    Route::get('/getuser/{prompt}', [UserController::class, 'getByNameLastname']);
 });
 Route::group([
     'middleware' => 'auth:api'
